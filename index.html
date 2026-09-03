@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alejandra Becerra | Poeta Colombiana</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #111111;
+            --bg-light: #FFFFF0;
+            --text-light: #FAF9F6;
+            --text-dark: #1c1c1c;
+            --accent-gold: #C5A059;
+            --accent-green: #0F2517;
+            --earth: #8B7355;
+            
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        /* Resets & Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+        h1, h2, h3, h4, .serif { font-family: var(--font-serif); font-weight: 400; }
+        a { text-decoration: none; color: inherit; cursor: none; }
+        ul { list-style: none; }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+            background: var(--accent-gold); border-radius: 50%;
+            pointer-events: none; z-index: 10000;
+            transform: translate(-50%, -50%); mix-blend-mode: difference;
+            transition: width 0.3s, height 0.3s;
+        }
+        .cursor.hovered { width: 40px; height: 40px; background: rgba(197, 160, 89, 0.4); }
+        @media (hover: none) and (pointer: coarse) { .cursor { display: none; } body { cursor: auto; } a { cursor: pointer; } }
+
+        /* Cinematic Noise overlay */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999; opacity: 0.04;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed; inset: 0; background: var(--bg-dark); z-index: 9000;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .loader-text { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 2px; opacity: 0; }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 2rem 4rem; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            mix-blend-mode: difference;
+        }
+        .logo { font-size: 1.2rem; letter-spacing: 4px; font-weight: 300; }
+        .nav-links { display: flex; gap: 3rem; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        
+        /* Audio Control */
+        .audio-btn {
+            position: fixed; bottom: 2rem; right: 4rem; z-index: 100;
+            background: transparent; border: 1px solid rgba(255,255,255,0.3);
+            color: var(--text-light); padding: 0.5rem 1rem; border-radius: 20px;
+            font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 2px;
+            mix-blend-mode: difference; cursor: none;
+        }
+
+        /* Sections */
+        section { min-height: 100vh; padding: 10vh 10vw; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .section-num { font-size: 0.8rem; letter-spacing: 3px; color: var(--accent-gold); margin-bottom: 2rem; }
+
+        /* Hero */
+        .hero { align-items: center; text-align: center; }
+        .hero-title { font-size: clamp(3rem, 8vw, 8rem); letter-spacing: 5px; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; opacity: 0; }
+        .hero-subtitle { font-family: var(--font-sans); font-size: 1rem; letter-spacing: 8px; opacity: 0; font-weight: 200; }
+        .scroll-indicator { position: absolute; bottom: 10vh; font-size: 0.7rem; letter-spacing: 4px; opacity: 0.5; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 0.8; transform: translateY(5px); } 100% { opacity: 0.3; transform: translateY(0); } }
+
+        /* La Poeta */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; }
+        .img-wrap { width: 100%; height: 70vh; overflow: hidden; position: relative; background: var(--text-dark); }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.2); transform: scale(1.1); }
+        .bio-text { font-size: 1.2rem; line-height: 1.8; font-weight: 300; }
+        .bio-text p { margin-bottom: 2rem; }
+
+        /* Frase / Quote */
+        .quote-section { background: var(--text-light); color: var(--text-dark); text-align: center; }
+        .quote-text { font-size: clamp(2rem, 5vw, 4rem); font-style: italic; line-height: 1.4; max-width: 80%; margin: 0 auto; }
+        .quote-author { margin-top: 3rem; font-family: var(--font-sans); font-size: 0.9rem; letter-spacing: 4px; }
+
+        /* Obra */
+        .obra-list { border-top: 1px solid rgba(255,255,255,0.2); margin-top: 4rem; }
+        .obra-item { 
+            display: flex; justify-content: space-between; padding: 2rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2); transition: all 0.4s ease;
+        }
+        .obra-item:hover { padding-left: 2rem; color: var(--accent-gold); }
+        .obra-title { font-size: 2.5rem; font-family: var(--font-serif); }
+        .obra-meta { font-size: 0.9rem; font-family: var(--font-sans); opacity: 0.7; text-align: right; }
+
+        /* Poemas Reader */
+        .reader-section { background: var(--bg-dark); }
+        .poem-container { max-width: 600px; margin: 0 auto; text-align: center; padding: 10vh 0; }
+        .poem-title { font-size: 2.5rem; margin-bottom: 4rem; color: var(--accent-gold); }
+        .verse { font-size: 1.5rem; line-height: 2.2; margin-bottom: 1rem; opacity: 0.2; transition: opacity 0.5s ease; font-family: var(--font-serif); }
+        .verse.active { opacity: 1; }
+
+        /* Versos Flotantes */
+        .versos-section { height: 100vh; overflow: hidden; position: relative; background: var(--accent-green); }
+        .floating-verse {
+            position: absolute; font-family: var(--font-serif); font-size: 1.5rem; color: var(--accent-gold);
+            opacity: 0.6; white-space: nowrap; transition: all 0.3s ease;
+        }
+        .floating-verse:hover { opacity: 1; transform: scale(1.1) !important; z-index: 10; }
+
+        /* Colombia */
+        .colombia-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; height: 60vh; }
+        .col-img { background: #222; height: 100%; position: relative; overflow: hidden; }
+        .col-data { position: absolute; bottom: 2rem; left: 2rem; font-family: var(--font-sans); font-size: 0.8rem; letter-spacing: 2px; }
+
+        /* Timeline */
+        .timeline { border-left: 1px solid var(--accent-gold); padding-left: 3rem; margin-left: 2rem; }
+        .time-item { margin-bottom: 4rem; position: relative; opacity: 0; transform: translateY(30px); }
+        .time-item::before {
+            content: ''; position: absolute; left: -3.3rem; top: 0.5rem; width: 10px; height: 10px;
+            background: var(--accent-gold); border-radius: 50%;
+        }
+        .time-year { font-family: var(--font-sans); color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .time-title { font-size: 1.8rem; margin-bottom: 1rem; font-family: var(--font-serif); }
+
+        /* Footer */
+        footer { padding: 10vh 10vw; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-title { font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 1rem; }
+        .footer-end { font-family: var(--font-serif); font-size: 0.9rem; font-style: italic; color: var(--earth); margin-top: 4rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+            .nav-links { display: none; } /* En producción se añadiría menú hamburguesa */
+            .grid-2 { grid-template-columns: 1fr; }
+            section { padding: 8vh 5vw; }
+            .hero-title { font-size: 3rem; }
+            .colombia-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="noise"></div>
+    
+    <!-- Loader Cinematico -->
+    <div class="loader">
+        <div class="loader-text">[ LA PALABRA SE HACE CUERPO ]</div>
+    </div>
+
+    <!-- Navegación -->
+    <nav>
+        <div class="logo">A.B.</div>
+        <ul class="nav-links">
+            <li class="hover-target">Inicio</li>
+            <li class="hover-target">La Poeta</li>
+            <li class="hover-target">Obra</li>
+            <li class="hover-target">Poemas</li>
+            <li class="hover-target">Multimedia</li>
+        </ul>
+    </nav>
+
+    <!-- Opcional Botón de Audio (Placeholder) -->
+    <button class="audio-btn hover-target">🔊 SONIDO OFF</button>
+
+    <!-- Portada -->
+    <section class="hero">
+        <h1 class="hero-title">Alejandra Becerra</h1>
+        <p class="hero-subtitle">POETA COLOMBIANA</p>
+        <div class="scroll-indicator">SCROLL TO ENTER</div>
+    </section>
+
+    <!-- La Poeta -->
+    <section class="grid-2">
+        <div class="img-wrap reveal-img">
+            <!-- PLACEHOLDER IMAGEN: Reemplazar src por la fotografía oficial -->
+            <img src="/images/alejandra-becerra.jpg" alt="Retrato de Alejandra Becerra" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\'><rect width=\'100%\' height=\'100%\' fill=\'%231c1c1c\'/><text x=\'50%\' y=\'50%\' fill=\'%23fff\' font-family=\'sans-serif\' font-size=\'14\' text-anchor=\'middle\'>[ IMAGEN: /images/alejandra-becerra.jpg ]</text></svg>'">
+        </div>
+        <div class="bio-text">
+            <div class="section-num">01 / IDENTIDAD</div>
+            <p>Nacida en Bogotá, Colombia (1992). Una voz que transita entre la memoria, el cuerpo y el territorio. Su poesía aborda la resistencia, la maternidad como construcción histórica y el dolor que atraviesa el paisaje colombiano.</p>
+            <p>Ha sido incluida en antologías fundamentales de la lírica actual, estableciendo un diálogo directo con las realidades sociopolíticas y las manifestaciones de otras memorias en el país.</p>
+        </div>
+    </section>
+
+    <!-- Obra -->
+    <section>
+        <div class="section-num">02 / BIBLIOTECA DIGITAL</div>
+        <h2 class="serif" style="font-size: 3rem; margin-bottom: 2rem;">Su Obra</h2>
+        <div class="obra-list">
+            <div class="obra-item hover-target">
+                <div class="obra-title">En otros bosques</div>
+                <div class="obra-meta">La Raíz Invertida<br>[AÑO POR COMPLETAR]</div>
+            </div>
+            <div class="obra-item hover-target">
+                <div class="obra-title">Veinte voces emergentes</div>
+                <div class="obra-meta">Poesía Colombiana del Siglo XXI<br>Ed. Exilio, 2023</div>
+            </div>
+            <div class="obra-item hover-target">
+                <div class="obra-title">Yo vengo a ofrecer mi poema</div>
+                <div class="obra-meta">Antología de resistencia<br>Ed. Escarabajo, 2021</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frase Especial -->
+    <section class="quote-section">
+        <h2 class="quote-text">"[Aquí aparecerá un fragmento autorizado de su obra, o un verso inédito]"</h2>
+        <p class="quote-author">— ALEJANDRA BECERRA</p>
+    </section>
+
+    <!-- Poemas (Lector minimalista) -->
+    <section class="reader-section">
+        <div class="section-num" style="text-align: center;">03 / LECTURA</div>
+        <div class="poem-container">
+            <h3 class="poem-title">Secuencia de madres</h3>
+            <!-- Versos reales publicados en Cardenal Revista Literaria -->
+            <p class="verse">Guárdala por nueve meses, decía la hermana,</p>
+            <p class="verse">busca en el interior el reflejo de la madre que</p>
+            <p class="verse">quisiste tener en los años que fuiste niña,</p>
+            <p class="verse">traza el rostro de una vida con tu vientre y corre por</p>
+            <p class="verse">el tiempo en los pasos que enseñan los hijos.</p>
+            <br><br>
+            <p class="verse">Cuando estés cansada busca en la mañana</p>
+            <p class="verse">las fotografías que hicieron una vez la maternidad.</p>
+            <p class="verse">En puntas salta y alcanza los juguetes de antiguas generaciones.</p>
+        </div>
+    </section>
+
+    <!-- Nube de Versos -->
+    <section class="versos-section" id="canvas-versos">
+        <!-- Fragmentos reales del poema 'Origen' -->
+        <div class="floating-verse" data-speed="1.5" style="top: 20%; left: 10%;">¿Y si el mundo se llena de mujeres sin rostro?</div>
+        <div class="floating-verse" data-speed="-1" style="top: 50%; left: 40%;">Mujeres que mueren con el líquido al hacerse madres.</div>
+        <div class="floating-verse" data-speed="2" style="top: 70%; left: 15%;">Mujeres que escuchan las paredes...</div>
+        <div class="floating-verse" data-speed="-1.5" style="top: 30%; left: 60%;">Mujeres sentenciadas al olvido de sus caderas.</div>
+        <div class="floating-verse" data-speed="0.8" style="top: 80%; left: 50%;">...que piden permiso para entrar, que piden derecho al salir.</div>
+    </section>
+
+    <!-- Colombia como Inspiración -->
+    <section>
+        <div class="section-num">04 / EL TERRITORIO</div>
+        <div class="colombia-grid">
+            <div class="col-img">
+                <img src="/images/colombia-textura.jpg" alt="Textura territorio" style="width:100%; height:100%; object-fit:cover; opacity:0.6; filter: grayscale(100%);" onerror="this.style.display='none'">
+                <div class="col-data">BOGOTÁ, COLOMBIA<br>4.7110° N, 74.0721° W</div>
+            </div>
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+                <p class="bio-text">La poesía se entrelaza con el lodo, los ríos y la resistencia civil. En poemas como <em>Secuencia de río</em>, el paisaje colombiano no es un mero escenario, sino un cuerpo que desaparece "en la ingeniería fluvial del progreso".</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Línea del tiempo -->
+    <section>
+        <div class="section-num">05 / TRAYECTORIA</div>
+        <div class="timeline">
+            <div class="time-item">
+                <div class="time-year">1992</div>
+                <div class="time-title">Nacimiento</div>
+                <p>Nace en Bogotá, Colombia.</p>
+            </div>
+            <div class="time-item">
+                <div class="time-year">2021</div>
+                <div class="time-title">Yo vengo a ofrecer mi poema</div>
+                <p>Inclusión en la antología de resistencia, Ed. Escarabajo.</p>
+            </div>
+            <div class="time-item">
+                <div class="time-year">2023</div>
+                <div class="time-title">Veinte voces emergentes</div>
+                <p>Seleccionada en la muestra de Poesía Colombiana del Siglo XXI por la Editorial Exilio.</p>
+            </div>
+            <div class="time-item">
+                <div class="time-year">[AÑO]</div>
+                <div class="time-title">Festivales y Revistas</div>
+                <p>Participación en <em>El poeta tiene la palabra</em> y <em>Ojo en la tinta</em>. Publicaciones en Círculo de poesía y Occidente XXI.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <h2 class="footer-title">ALEJANDRA BECERRA</h2>
+        <p>Poeta Colombiana</p>
+        <div class="footer-end">FIN / O QUIZÁS EL COMIENZO DE OTRO VERSO</div>
+    </footer>
+
+    <!-- Scripts: GSAP & Lenis -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // 1. Smooth Scrolling (Lenis)
+        const lenis = new Lenis({ duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // 2. Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
+        });
+        
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // 3. Cinematic Loader & Hero Anim
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const tlLoader = gsap.timeline();
+        tlLoader.to('.loader-text', { opacity: 1, duration: 1.5, ease: "power2.inOut" })
+                .to('.loader-text', { opacity: 0, duration: 1, delay: 1 })
+                .to('.loader', { yPercent: -100, duration: 1.5, ease: "expo.inOut" })
+                .to('.hero-title', { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=0.5")
+                .to('.hero-subtitle', { opacity: 1, duration: 1 }, "-=1");
+
+        // 4. Parallax Image
+        gsap.to('.img-wrap img', {
+            yPercent: 15, ease: "none",
+            scrollTrigger: { trigger: ".img-wrap", start: "top bottom", end: "bottom top", scrub: true }
+        });
+
+        // 5. Poem Reader (Reveal progresivo por verso)
+        gsap.utils.toArray('.verse').forEach(verse => {
+            ScrollTrigger.create({
+                trigger: verse, start: "top 60%", end: "bottom 40%",
+                toggleClass: "active", markers: false
+            });
+        });
+
+        // 6. Floating Verses (Nube de pensamientos)
+        const versosSection = document.getElementById('canvas-versos');
+        const floatingVerses = document.querySelectorAll('.floating-verse');
+        
+        versosSection.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            
+            floatingVerses.forEach(verse => {
+                const speed = verse.getAttribute('data-speed');
+                gsap.to(verse, { x: x * 60 * speed, y: y * 60 * speed, duration: 2, ease: "power2.out" });
+            });
+        });
+
+        // 7. Timeline Reveal
+        gsap.utils.toArray('.time-item').forEach((item, i) => {
+            gsap.to(item, {
+                opacity: 1, y: 0, duration: 1,
+                scrollTrigger: { trigger: item, start: "top 80%" }
+            });
+        });
+
+        // 8. Audio Toggle (Funcionalidad base)
+        const audioBtn = document.querySelector('.audio-btn');
+        let audioPlaying = false;
+        // const bgAudio = new Audio('/audio/ambiente.mp3'); // Descomentar al tener el archivo
+        
+        audioBtn.addEventListener('click', () => {
+            audioPlaying = !audioPlaying;
+            audioBtn.textContent = audioPlaying ? '🔊 SONIDO ON' : '🔊 SONIDO OFF';
+            // audioPlaying ? bgAudio.play() : bgAudio.pause();
+        });
+    </script>
+</body>
+</html>
